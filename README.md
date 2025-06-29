@@ -7,7 +7,7 @@
 
 ![Portfolio Preview](screenshots/preview.png)
 
-[🚀 **Live Demo**]([your-demo-link](https://l0venote.github.io/Portfolio/)) | [🐛 **Report Bug**](https://github.com/L0veNote/Portfolio/issues)
+[🐛 **Report Bug**](https://github.com/L0veNote/Portfolio/issues)
 
 ## Features
 
