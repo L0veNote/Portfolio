@@ -3,7 +3,6 @@
 > A modern, dark-themed portfolio that automatically displays your GitHub projects
 
 [![Demo](https://img.shields.io/badge/demo-live-brightgreen)](your-demo-link)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ![Portfolio Preview](screenshots/preview.png)
 
@@ -112,11 +111,3 @@ The project follows best practices for code organization:
 - Firefox (recommended)
 - Safari
 - Edge
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## Contributing
-
-Feel free to fork this project and customize it for your own portfolio! 
