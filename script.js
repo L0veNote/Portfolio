@@ -1,472 +1,574 @@
-// Custom project data
-// Add your custom project info and screenshots here
-const customProjects = {
-    'portfolio': {
-        name: 'Portfolio Website',
-        description: 'A modern, responsive portfolio website built with HTML, CSS, and JavaScript. Features dark theme, GitHub API integration, and smooth animations.',
-        technologies: ['HTML', 'CSS', 'JavaScript', 'GitHub API'],
-        screenshots: [
-            'screenshots/portfolio-main.png',
-            'screenshots/portfolio-projects.png',
-            'screenshots/portfolio-mobile.png'
-        ]
-    },
-    'react-portfolio': {
-        name: 'React Portfolio',
-        description: 'A React-based portfolio with TypeScript, featuring modern UI components and GitHub integration.',
-        technologies: ['React', 'TypeScript', 'CSS', 'GitHub API'],
-        screenshots: [
-            'screenshots/react-portfolio-main.png',
-            'screenshots/react-portfolio-projects.png'
-        ]
-    },
-    'website': {
-        screenshots: [
-            'screenshots/website.png'
-        ]
-    },
-    'WebStore': {
-        screenshots: [
-            'screenshots/webbstore.png'
-        ]
-    },
-    'Josee.moe': {
-        screenshots: [
-            'screenshots/joseemoe.png'
-        ]
-    }
+// ============================================
+// GITHUB API CONFIGURATION
+// ============================================
+// ⚙️ CONFIGURATION: Change this to your GitHub username
+const GITHUB_USERNAME = 'L0veNote';
+const GITHUB_API_URL = `https://api.github.com/users/${GITHUB_USERNAME}`;
+const GITHUB_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
+const GITHUB_PROFILE_URL = `https://github.com/${GITHUB_USERNAME}`;
+
+// ============================================
+// LANGUAGE COLORS MAPPING
+// ============================================
+const LANGUAGE_COLORS = {
+    'JavaScript': '#f1e05a',
+    'TypeScript': '#2b7489',
+    'Python': '#3572A5',
+    'Java': '#b07219',
+    'C++': '#f34b7d',
+    'C': '#555555',
+    'C#': '#239120',
+    'HTML': '#e34c26',
+    'CSS': '#563d7c',
+    'PHP': '#4F5D95',
+    'Ruby': '#701516',
+    'Go': '#00ADD8',
+    'Rust': '#dea584',
+    'Swift': '#fa7343',
+    'Kotlin': '#F18E33',
+    'Dart': '#00B4AB',
+    'Shell': '#89e051',
+    'Vue': '#42b883',
+    'React': '#61dafb',
+    'Angular': '#dd0031',
+    'Svelte': '#ff3e00',
+    'SCSS': '#c6538c',
+    'Sass': '#c6538c',
+    'Less': '#1d365d',
+    'Dockerfile': '#384d54',
+    'Markdown': '#083fa1'
 };
 
-// Fetch and display GitHub projects
-// Fetches repos from GitHub API and merges with customProjects
-async function fetchProjects() {
+// ============================================
+// FETCH GITHUB DATA
+// ============================================
+async function fetchGitHubData() {
     try {
-        const response = await fetch('https://api.github.com/users/L0veNote/repos?sort=updated&per_page=100');
-        const repos = await response.json();
+        // Show loading state
+        showLoadingState();
         
-        const projects = repos
-            .filter(repo => !repo.fork && !repo.archived && !repo.disabled && repo.name !== 'L0veNote')
-            .map(repo => {
-                const customData = customProjects[repo.name];
-                return {
-                    id: repo.id,
-                    name: repo.name,
-                    description: customData?.description || repo.description || 'No description available',
-                    technologies: customData?.technologies || repo.topics || [repo.language || 'Unknown'].filter(Boolean),
-                    githubUrl: repo.html_url,
-                    liveUrl: repo.homepage || null,
-                    stars: repo.stargazers_count,
-                    forks: repo.forks_count,
-                    updatedAt: repo.updated_at,
-                    screenshots: customData?.screenshots || []
-                };
-            })
-            .sort((a, b) => b.stars - a.stars || new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-
-        displayProjects(projects);
+        // Fetch user and repos in parallel
+        const [userResponse, reposResponse] = await Promise.all([
+            fetch(GITHUB_API_URL),
+            fetch(GITHUB_REPOS_URL)
+        ]);
+        
+        if (!userResponse.ok) {
+            throw new Error(`GitHub API error: ${userResponse.status}`);
+        }
+        
+        if (!reposResponse.ok) {
+            throw new Error(`GitHub API error: ${reposResponse.status}`);
+        }
+        
+        const user = await userResponse.json();
+        const repos = await reposResponse.json();
+        
+        // Process and display data
+        displayUserStats(user, repos);
+        displayRepos(repos);
+        
+        // Hide loading state
+        hideLoadingState();
+        
     } catch (error) {
-        console.error('Error fetching projects:', error);
-        document.getElementById('projects-container').innerHTML = `
-            <div style="text-align: center; grid-column: 1 / -1; padding: 4rem 0;">
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">Failed to load projects</p>
-                <button onclick="fetchProjects()" class="btn btn-primary" style="margin-top: 1rem;">Try Again</button>
-            </div>
-        `;
+        console.error('Error fetching GitHub data:', error);
+        displayError(error);
     }
 }
 
-// Animated hearts background
-// Handles drawing and animating cute hearts in the background
-
-function randomPastel() {
-    const colors = [
-        '#ff8ebf', '#b5e0ff', '#ffb6e6', '#b48ea7', '#ff6b9d', '#8ec5ff', '#ff9ed2', '#a8d5ff', '#ff7bb3', '#9bcaff'
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function drawHearts() {
-    const canvas = document.getElementById('cuteHearts');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    canvas.width = w;
-    canvas.height = h;
-    ctx.clearRect(0, 0, w, h);
-    for (let i = 0; i < window._hearts.length; i++) {
-        const heart = window._hearts[i];
-        ctx.save();
-        ctx.globalAlpha = heart.alpha;
-        ctx.translate(heart.x, heart.y);
-        ctx.rotate(heart.angle);
-        ctx.scale(heart.size, heart.size);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.bezierCurveTo(0, -0.5, -1, -0.8, -1, -1.5);
-        ctx.bezierCurveTo(-1, -2.2, 0, -2, 0, -1.2);
-        ctx.bezierCurveTo(0, -2, 1, -2.2, 1, -1.5);
-        ctx.bezierCurveTo(1, -0.8, 0, -0.5, 0, 0);
-        ctx.closePath();
-        ctx.fillStyle = heart.color;
-        ctx.shadowColor = heart.color;
-        ctx.shadowBlur = 16;
-        ctx.fill();
-        ctx.restore();
-        heart.y -= heart.speed;
-        heart.alpha -= 0.0015 + Math.random() * 0.001;
-        heart.angle += 0.002 * (Math.random() - 0.5);
-        if (heart.alpha <= 0) {
-            window._hearts[i] = makeHeart(w, h);
-        }
+// ============================================
+// DISPLAY USER STATISTICS
+// ============================================
+function displayUserStats(user, repos) {
+    // Calculate statistics (excluding the username's own repo if it exists)
+    const filteredRepos = repos.filter(repo => !repo.fork && repo.name !== GITHUB_USERNAME);
+    const totalRepos = filteredRepos.length;
+    const totalStars = filteredRepos.reduce((sum, repo) => sum + (repo.stargazers_count || 0), 0);
+    const languages = new Set(filteredRepos.filter(repo => repo.language).map(repo => repo.language));
+    const uniqueLanguages = languages.size;
+    
+    // Update stats with animation
+    animateCounter('stat-repos', totalRepos);
+    animateCounter('stat-stars', totalStars);
+    animateCounter('stat-languages', uniqueLanguages);
+    
+    // Load profile avatar
+    loadProfileAvatar(user.avatar_url || `https://github.com/${GITHUB_USERNAME}.png`);
+    
+    // Display profile name
+    const profileNameEl = document.getElementById('profile-name');
+    if (profileNameEl) {
+        const displayName = user.name || user.login || GITHUB_USERNAME;
+        profileNameEl.textContent = displayName;
+        profileNameEl.style.opacity = '0';
+        setTimeout(() => {
+            profileNameEl.style.transition = 'opacity 0.6s ease-out';
+            profileNameEl.style.opacity = '1';
+        }, 200);
     }
-    requestAnimationFrame(drawHearts);
 }
 
-function makeHeart(w, h) {
-    return {
-        x: Math.random() * w,
-        y: h + 40 + Math.random() * 80,
-        size: 0.8 + Math.random() * 1.6,
-        color: randomPastel(),
-        alpha: 0.18 + Math.random() * 0.22,
-        speed: 0.18 + Math.random() * 0.22,
-        angle: Math.random() * Math.PI * 2
+// ============================================
+// LOAD PROFILE AVATAR
+// ============================================
+function loadProfileAvatar(avatarUrl) {
+    const avatarImg = document.getElementById('profile-avatar');
+    if (!avatarImg) return;
+    
+    const img = new Image();
+    img.onload = function() {
+        avatarImg.src = avatarUrl;
+        avatarImg.classList.add('loaded');
     };
+    img.onerror = function() {
+        // If image fails to load, keep placeholder
+        console.warn('Failed to load profile avatar');
+    };
+    img.src = avatarUrl;
 }
 
-function initHearts() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    window._hearts = [];
-    for (let i = 0; i < 22; i++) {
-        window._hearts.push(makeHeart(w, h));
+// ============================================
+// ANIMATE COUNTER
+// ============================================
+function animateCounter(elementId, targetValue) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const duration = 1500;
+    const startValue = 0;
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function (ease-out)
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOut);
+        
+        element.textContent = currentValue;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = targetValue;
+        }
     }
-    drawHearts();
+    
+    requestAnimationFrame(updateCounter);
 }
 
-window.addEventListener('resize', () => setTimeout(initHearts, 200));
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initHearts, 100);
-});
-
-// Button squish effect
-// Adds a squish animation to all buttons and social links
-
-function addSquishEffect() {
-    document.querySelectorAll('.btn, .social-link').forEach(btn => {
-        btn.addEventListener('mousedown', function() {
-            this.style.transform += ' scale(0.93)';
-        });
-        btn.addEventListener('mouseup', function() {
-            this.style.transform = this.style.transform.replace(' scale(0.93)', '');
-        });
-        btn.addEventListener('mouseleave', function() {
-            this.style.transform = this.style.transform.replace(' scale(0.93)', '');
-        });
-    });
-}
-document.addEventListener('DOMContentLoaded', addSquishEffect);
-
-// Easter egg: confetti on avatar click
-// Shows confetti animation when the avatar is clicked
-function showRandomMessage() {
-    const messages = [
-        { text: "You're amazing! 💖", emoji: "✨" },
-        { text: "Have a wonderful day! 🌸", emoji: "💕" },
-        { text: "You're doing great! 🚀", emoji: "⭐" },
-        { text: "Keep being awesome! 🎨", emoji: "💫" },
-        { text: "You're a star! ⭐", emoji: "🌟" },
-        { text: "Sending you good vibes! 🍀", emoji: "🌈" },
-        { text: "You're incredible! 💎", emoji: "💖" },
-        { text: "Stay positive! 🌺", emoji: "💝" },
-        { text: "You're beautiful! 🌸", emoji: "💗" },
-        { text: "Keep shining! ✨", emoji: "💫" }
-    ];
+// ============================================
+// DISPLAY REPOSITORIES
+// ============================================
+function displayRepos(repos) {
+    const grid = document.getElementById('projects-grid');
+    if (!grid) return;
     
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    // Clear grid
+    grid.innerHTML = '';
     
-    // Creating cute popup
-    const popup = document.createElement('div');
-    popup.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: var(--bg-secondary);
-        border: 3px solid var(--text-accent);
-        border-radius: 2rem;
-        padding: 2rem;
-        text-align: center;
-        z-index: 10000;
-        box-shadow: var(--shadow-lg);
-        animation: popupIn 0.5s cubic-bezier(.68,-0.55,.27,1.55);
-        max-width: 300px;
-        width: 90%;
-    `;
+    // Filter out forks, archived repos, and the username's own repo (README-only repo)
+    const filteredRepos = repos
+        .filter(repo => !repo.fork && !repo.archived && repo.name !== GITHUB_USERNAME)
+        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+        .slice(0, 20); // Limit to 20 most recent repos
     
-    popup.innerHTML = `
-        <div style="font-size: 3rem; margin-bottom: 1rem; animation: sparkle 2s ease-in-out infinite;">${randomMessage.emoji}</div>
-        <h3 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.3rem;">${randomMessage.text}</h3>
-        <button onclick="this.parentElement.remove()" style="
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 1.5rem;
-            padding: 0.8rem 1.5rem;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: all 0.2s;
-        ">Close 💖</button>
-    `;
-    
-    // Adding popup animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes popupIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5) rotate(-10deg);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1) rotate(0deg);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    
-    document.body.appendChild(popup);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (popup.parentElement) {
-            popup.style.animation = 'popupOut 0.5s ease-in-out forwards';
-            const popupOutStyle = document.createElement('style');
-            popupOutStyle.textContent = `
-                @keyframes popupOut {
-                    to {
-                        opacity: 0;
-                        transform: translate(-50%, -50%) scale(0.5) rotate(10deg);
-                    }
-                }
-            `;
-            document.head.appendChild(popupOutStyle);
-            setTimeout(() => popup.remove(), 500);
-        }
-    }, 5000);
-}
-
-// Project card rendering
-// Renders project cards with screenshots, description, tech tags, and stats
-
-function pastelStatIcon(type) {
-    if (type === 'stars') return '<span title="Likes" style="cursor: help;">⭐</span>';
-    if (type === 'forks') return '<span title="Forks (project copies)" style="cursor: help;">🍰</span>';
-    if (type === 'date') return '<span title="Last update" style="cursor: help;">📅</span>';
-    return '';
-}
-
-function displayProjects(projects) {
-    const container = document.getElementById('projects-container');
-    
-    if (projects.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; grid-column: 1 / -1; padding: 4rem 0;">
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">No projects found. Check out my GitHub profile for more!</p>
-                <a href="https://github.com/L0veNote" target="_blank" class="btn btn-primary" style="margin-top: 1rem;"><span class='emoji-btn'>🐾</span>View GitHub Profile</a>
-            </div>
-        `;
+    if (filteredRepos.length === 0) {
+        grid.innerHTML = '<div class="no-repos">No repositories found</div>';
         return;
     }
+    
+    // Create project cards with staggered animation
+    filteredRepos.forEach((repo, index) => {
+        const card = createProjectCard(repo);
+        card.style.animationDelay = `${index * 0.1}s`;
+        grid.appendChild(card);
+    });
+}
 
-    container.innerHTML = projects.map((project, index) => `
-        <div class="card fade-in" style="height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden; animation-delay: ${index * 0.1}s;">
-            <div class="project-image">
-                ${project.screenshots.length > 0 ? 
-                    `<img src="${project.screenshots[0]}" alt="${project.name}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 1.2rem 1.2rem 0 0; background: #181828;">`
-                    : `${project.name.charAt(0).toUpperCase()}`
-                }
-            </div>
-            
-            <div style="flex: 1; display: flex; flex-direction: column;">
-                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">
-                    <span class="emoji-title">💎</span>${project.name}
-                </h3>
-                
-                <p style="color: var(--text-secondary); margin-bottom: 1rem; flex: 1; line-height: 1.6;">
-                    ${project.description}
-                </p>
-                
-                <div style="margin-bottom: 1rem;">
-                    ${project.technologies.slice(0, 5).map(tech => 
-                        `<span class="tech-tag">${tech}</span>`
-                    ).join('')}
-                    ${project.technologies.length > 5 ? 
-                        `<span class="tech-tag" style="color: var(--text-secondary);">+${project.technologies.length - 5}</span>` : ''
-                    }
-                </div>
-                
-                <div class="project-stats">
-                    <span>
-                        <span class="emoji-btn">${pastelStatIcon('stars')}</span>${project.stars}
-                    </span>
-                    <span>
-                        <span class="emoji-btn">${pastelStatIcon('forks')}</span>${project.forks}
-                    </span>
-                    <span>
-                        <span class="emoji-btn">${pastelStatIcon('date')}</span>${new Date(project.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </span>
-                </div>
-                
-                <div style="display: flex; gap: 0.5rem; margin-top: auto;">
-                    <a href="${project.githubUrl}" target="_blank" class="btn btn-secondary" style="flex: 1; justify-content: center;">
-                        <span class="emoji-btn">🐱</span>Code
+// ============================================
+// CREATE PROJECT CARD
+// ============================================
+function createProjectCard(repo) {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    
+    const language = repo.language || 'N/A';
+    const languageColor = LANGUAGE_COLORS[language] || '#9ca3af';
+    const stars = repo.stargazers_count || 0;
+    const forks = repo.forks_count || 0;
+    const updatedDate = formatDate(repo.updated_at);
+    
+    card.innerHTML = `
+        <div class="project-header">
+            <div>
+                <h3 class="project-name">
+                    <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">
+                        ${escapeHtml(repo.name)}
                     </a>
-                    ${project.liveUrl ? `
-                        <a href="${project.liveUrl}" target="_blank" class="btn btn-primary" style="flex: 1; justify-content: center;">
-                            <span class="emoji-btn">🚀</span>Live
-                        </a>
-                    ` : ''}
+                </h3>
+            </div>
+            <div class="project-stats">
+                <div class="stat-badge" title="Stars">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>${stars}</span>
+                </div>
+                <div class="stat-badge" title="Forks">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="6" cy="6" r="3"></circle>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="18" r="3"></circle>
+                        <path d="M9 6v12M15 12V6"></path>
+                    </svg>
+                    <span>${forks}</span>
                 </div>
             </div>
         </div>
-    `).join('');
-}
-
-// (Optional) Modal functions (not used)
-
-// Modal functions
-function openScreenshotModal(projectName, screenshots) {
-    if (!screenshots || screenshots.length === 0) {
-        return;
-    }
-
-    const modal = document.getElementById('screenshotModal');
-    const modalContent = document.getElementById('modalContent');
-    
-    modalContent.innerHTML = `
-        <h2 style="color: var(--text-primary); margin-bottom: 1rem;">${projectName} Screenshots</h2>
-        <div class="gallery-grid">
-            ${screenshots.map((screenshot, index) => `
-                <div class="gallery-item" onclick="showFullImage('${screenshot}')">
-                    <img src="${screenshot}" alt="Screenshot ${index + 1}" onerror="this.style.display='none'; this.parentElement.style.display='none';">
-                </div>
-            `).join('')}
+        <p class="project-description">
+            ${repo.description ? escapeHtml(repo.description) : 'No description available'}
+        </p>
+        <div class="project-footer">
+            <div class="project-language">
+                <span class="language-dot" style="background-color: ${languageColor};"></span>
+                <span>${language}</span>
+            </div>
+            <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="project-link">
+                <span>View</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+            </a>
         </div>
+        <div class="project-updated">Updated ${updatedDate}</div>
     `;
     
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    return card;
 }
 
-function showFullImage(imageSrc) {
-    const modalContent = document.getElementById('modalContent');
-    modalContent.innerHTML = `
-        <img src="${imageSrc}" alt="Full screenshot" class="modal-image">
-    `;
-}
-
-function closeModal() {
-    const modal = document.getElementById('screenshotModal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('screenshotModal');
-    if (event.target === modal) {
-        closeModal();
+// ============================================
+// FORMAT DATE
+// ============================================
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+        return 'today';
+    } else if (diffDays === 1) {
+        return 'yesterday';
+    } else if (diffDays < 7) {
+        return `${diffDays} days ago`;
+    } else if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    } else if (diffDays < 365) {
+        const months = Math.floor(diffDays / 30);
+        return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    } else {
+        const years = Math.floor(diffDays / 365);
+        return `${years} ${years === 1 ? 'year' : 'years'} ago`;
     }
 }
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeModal();
+// ============================================
+// ESCAPE HTML
+// ============================================
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ============================================
+// LOADING STATE
+// ============================================
+function showLoadingState() {
+    const loadingState = document.getElementById('loading-state');
+    if (loadingState) {
+        loadingState.style.display = 'flex';
     }
+    
+    const projectsGrid = document.getElementById('projects-grid');
+    if (projectsGrid) {
+        projectsGrid.innerHTML = '';
+    }
+}
+
+function hideLoadingState() {
+    const loadingState = document.getElementById('loading-state');
+    if (loadingState) {
+        loadingState.style.display = 'none';
+    }
+}
+
+// ============================================
+// ERROR DISPLAY
+// ============================================
+function displayError(error) {
+    const grid = document.getElementById('projects-grid');
+    if (grid) {
+        grid.innerHTML = `
+            <div class="error-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #ef4444;">
+                <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">⚠️ Error loading repositories</p>
+                <p style="color: #9ca3af; font-size: 0.95rem;">${error.message}</p>
+            </div>
+        `;
+    }
+    
+    hideLoadingState();
+}
+
+// ============================================
+// SMOOTH SCROLL
+// ============================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
 });
 
-// Add hover effects to social links
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.social-link').forEach(link => {
-        link.addEventListener('mouseenter', function() {
-            this.style.borderColor = 'var(--text-accent)';
-            this.style.transform = 'translateY(-2px)';
-        });
-        link.addEventListener('mouseleave', function() {
-            this.style.borderColor = 'var(--border-color)';
-            this.style.transform = 'translateY(0)';
-        });
+// ============================================
+// NAVIGATION ACTIVE STATE
+// ============================================
+window.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('section[id]');
+    const scrollY = window.pageYOffset;
+    
+    sections.forEach(section => {
+        const sectionHeight = section.offsetHeight;
+        const sectionTop = section.offsetTop - 100;
+        const sectionId = section.getAttribute('id');
+        
+        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
     });
+});
 
-    // Fetch projects when page loads
-    fetchProjects();
+// ============================================
+// INTERSECTION OBSERVER FOR ANIMATIONS
+// ============================================
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
 
-    // Add scroll animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+// Observe all project cards
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.project-card');
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+});
+
+// ============================================
+// UPDATE GITHUB LINKS DYNAMICALLY
+// ============================================
+function updateGitHubLinks() {
+    const githubLinks = document.querySelectorAll('a[href*="github.com/L0veNote"]');
+    githubLinks.forEach(link => {
+        link.href = GITHUB_PROFILE_URL;
+    });
+}
+
+// ============================================
+// INITIALIZE ON PAGE LOAD
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    updateGitHubLinks();
+    fetchGitHubData();
+    initCursorFollower();
+    initParticles();
+});
+
+// ============================================
+// INTERACTIVE BACKGROUND
+// ============================================
+
+// Cursor Follower Effect
+let cursorFollower = null;
+let mouseX = 0;
+let mouseY = 0;
+let followerX = 0;
+let followerY = 0;
+
+function initCursorFollower() {
+    cursorFollower = document.getElementById('cursor-follower');
+    if (!cursorFollower) return;
+    
+    // Only enable on desktop (not touch devices)
+    if (window.matchMedia('(pointer: fine)').matches) {
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            if (!cursorFollower.classList.contains('active')) {
+                cursorFollower.classList.add('active');
             }
         });
-    }, observerOptions);
-
-    document.querySelectorAll('.fade-in').forEach(el => {
-        observer.observe(el);
-    });
-});
-
-// Easter egg: tylko konfetti po kliknięciu w avatar
-function triggerEasterEgg() {
-    showConfetti();
+        
+        // Smooth follow animation
+        function animate() {
+            followerX += (mouseX - followerX) * 0.1;
+            followerY += (mouseY - followerY) * 0.1;
+            
+            if (cursorFollower) {
+                cursorFollower.style.left = `${followerX}px`;
+                cursorFollower.style.top = `${followerY}px`;
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const avatar = document.getElementById('easterEggAvatar');
-    if (avatar) {
-        avatar.style.cursor = 'pointer';
-        avatar.title = 'Pssst... click me!';
-        avatar.addEventListener('click', triggerEasterEgg);
+// Particles Canvas Animation
+function initParticles() {
+    const canvas = document.getElementById('particles-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = createParticles();
+    });
+    
+    // Particle system
+    const particleCount = Math.min(50, Math.floor((canvas.width * canvas.height) / 20000));
+    
+    class Particle {
+        constructor() {
+            this.reset();
+            this.y = Math.random() * canvas.height;
+        }
+        
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 0.5;
+            this.speedY = (Math.random() - 0.5) * 0.5;
+            this.opacity = Math.random() * 0.5 + 0.2;
+            this.colorIndex = Math.floor(Math.random() * 3);
+        }
+        
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            
+            // Wrap around edges
+            if (this.x < 0) this.x = canvas.width;
+            if (this.x > canvas.width) this.x = 0;
+            if (this.y < 0) this.y = canvas.height;
+            if (this.y > canvas.height) this.y = 0;
+        }
+        
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            
+            const colors = [
+                'rgba(102, 126, 234, ' + this.opacity + ')',
+                'rgba(118, 75, 162, ' + this.opacity + ')',
+                'rgba(249, 147, 251, ' + this.opacity + ')'
+            ];
+            
+            ctx.fillStyle = colors[this.colorIndex];
+            ctx.fill();
+        }
     }
-});
-
-function showConfetti() {
-    for (let i = 0; i < 30; i++) {
-        const conf = document.createElement('div');
-        conf.textContent = ['🎉','✨','💥','🎊','🥳'][Math.floor(Math.random()*5)];
-        conf.style.position = 'fixed';
-        conf.style.left = Math.random()*100 + 'vw';
-        conf.style.top = '-3vh';
-        conf.style.fontSize = (Math.random()*1.5+1.5) + 'rem';
-        conf.style.zIndex = 9999;
-        conf.style.pointerEvents = 'none';
-        conf.style.opacity = 1;
-        document.body.appendChild(conf);
-        // Animacja spadania
-        let start = null;
-        const duration = 1800 + Math.random()*400;
-        const startTop = -3;
-        const endTop = 100 + Math.random()*10;
-        function animateConfetti(ts) {
-            if (!start) start = ts;
-            const progress = Math.min((ts - start) / duration, 1);
-            conf.style.top = (startTop + (endTop - startTop) * progress) + 'vh';
-            conf.style.opacity = 1 - progress;
-            if (progress < 1) {
-                requestAnimationFrame(animateConfetti);
-            } else {
-                conf.remove();
+    
+    let particles = [];
+    
+    function createParticles() {
+        const newParticles = [];
+        for (let i = 0; i < particleCount; i++) {
+            newParticles.push(new Particle());
+        }
+        return newParticles;
+    }
+    
+    particles = createParticles();
+    
+    // Connect nearby particles with lines
+    function connectParticles() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(102, 126, 234, ${0.1 * (1 - distance / 150)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
             }
         }
-        requestAnimationFrame(animateConfetti);
     }
-} 
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        
+        connectParticles();
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+}
+
+// ============================================
+// HANDLE MOBILE MENU (if needed)
+// ============================================
+if (window.innerWidth <= 768) {
+    // Mobile menu toggle could be added here if needed
+}

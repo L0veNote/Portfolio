@@ -3,149 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Narii's - Portfolio</title>
+    <title>Portfolio - GitHub Showcase</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="screenshots/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 🎨 Backgrounds: hearts, clouds, flowers, stars, balloons -->
-    <canvas class="cute-bg-hearts" id="cuteHearts"></canvas>
-    
-    <!-- Cute Clouds Background -->
-    <div class="cute-clouds">
-        <div class="cloud cloud-1">☁️</div>
-        <div class="cloud cloud-2">☁️</div>
-        <div class="cloud cloud-3">☁️</div>
-        <div class="cloud cloud-4">☁️</div>
-        <div class="cloud cloud-5">☁️</div>
-    </div>
-    
-    <!-- Cute Flowers Background -->
-    <div class="cute-flowers">
-        <div class="flower flower-1">🌸</div>
-        <div class="flower flower-2">🌺</div>
-        <div class="flower flower-3">🌼</div>
-        <div class="flower flower-4">🌻</div>
-        <div class="flower flower-5">🌷</div>
-    </div>
-    
-    <!-- Cute Stars Background -->
-    <div class="cute-stars">
-        <div class="star star-1">⭐</div>
-        <div class="star star-2">✨</div>
-        <div class="star star-3">⭐</div>
-        <div class="star star-4">✨</div>
-        <div class="star star-5">⭐</div>
-    </div>
-    
-    <!-- Cute Balloons Background -->
-    <div class="cute-balloons">
-        <div class="balloon balloon-1">🎈</div>
-        <div class="balloon balloon-2">🎈</div>
-        <div class="balloon balloon-3">🎈</div>
+    <!-- Interactive Background -->
+    <div class="animated-bg">
+        <div class="mesh-gradient"></div>
+        <div class="grid-pattern"></div>
+        <div class="interactive-circle" id="cursor-follower"></div>
+        <canvas id="particles-canvas"></canvas>
     </div>
 
-    <!-- 👤 Hero section: profile, title, description, buttons, social links -->
-    <section class="section" style="min-height: 100vh; display: flex; align-items: center;">
-        <div class="container">
-            <!-- Avatar & Title -->
-            <div class="fade-in" style="text-align: center;">
-                <!-- Profile Picture -->
-                <div class="avatar-cute fade-in hero-avatar" id="easterEggAvatar">
-                    <img src="screenshots/pfp.jpg" alt="Profile picture" style="width: 96px; height: 96px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 24px 0 #0002, 0 0 0 4px var(--bg-secondary); border: 3px solid var(--text-accent); background: var(--bg-secondary);">
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="brand-icon">✨</span>
+                <span class="brand-text">Portfolio</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="https://github.com/L0veNote" target="_blank" class="nav-link nav-cta">
+                    <span>GitHub</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-icon">⭐</span>
+                    <span class="badge-text">Full-Stack Developer & Open Source Enthusiast</span>
                 </div>
-
-                <h1 class="gradient-text fade-in hero-title" style="font-size: 3.5rem; font-weight: 700; margin-bottom: 1rem;">
-                    <span class="emoji-title">💖</span>Narii
+                <h1 class="hero-title">
+                    <span class="title-line">The perfect blend of</span>
+                    <span class="title-line title-gradient">beauty and back-end.</span>
                 </h1>
-
-                <p class="fade-in hero-subtitle" style="font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 2rem;">
-                    Full-Stack Developer & Open Source Enthusiast
+                <p class="hero-description">
+                    Pretty designs, powerhouse code.<br>
+                    Building with logic, designed with love. 🎀
                 </p>
-
-                <p class="fade-in hero-description" style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 3rem; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    Crafting digital magic with code ✨ <span aria-label="serduszko">💕</span>
-                    <br><span style="font-size: 0.9rem; opacity: 0.8;">Turning coffee into code ☕</span>
-                </p>
-
-                <div class="fade-in hero-buttons" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 3rem;">
-                    <a href="#projects" class="btn btn-primary"><span class="emoji-btn">✨</span>View My Work</a>
-                </div>
-
-                <div class="social-links fade-in hero-social">
-                    <a href="https://github.com/L0veNote" target="_blank" class="social-link" title="GitHub">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <div class="hero-cta">
+                    <a href="#projects" class="btn btn-primary">
+                        <span>View My Work</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/L0veNote" target="_blank" class="btn btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                         </svg>
-                    </a>
-                    <a href="https://discord.gg/your-server" target="_blank" class="social-link" title="Discord">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.019 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1568 2.4189Z"/>
-                        </svg>
-                    </a>
-                    <a href="mailto:your-email@example.com" class="social-link" title="Email">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                        </svg>
+                        <span>GitHub</span>
                     </a>
                 </div>
             </div>
+            <div class="hero-visual">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-image-wrapper">
+                            <div class="profile-image-glow"></div>
+                            <div class="profile-image">
+                                <img id="profile-avatar" src="" alt="Profile Picture" class="profile-avatar">
+                                <div class="profile-image-placeholder">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                                        <circle cx="60" cy="60" r="60" fill="url(#profileGradient)"/>
+                                        <defs>
+                                            <linearGradient id="profileGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-name" id="profile-name"></div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-repos">0</div>
+                            <div class="stat-label">Repositories</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-stars">0</div>
+                            <div class="stat-label">Stars</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-languages">0</div>
+                            <div class="stat-label">Languages</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <div class="scroll-dot"></div>
         </div>
     </section>
 
-    <!-- 🗂️ Projects section: project cards grid -->
-    <section id="projects" class="section projects-section">
-        <div class="container">
-            <!-- Projects Title & Loading -->
-            <div class="fade-in projects-title" style="text-align: center; margin-bottom: 4rem;">
-                <h2 class="gradient-text" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">
-                    <span class="emoji-title">🌸</span>My Projects
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">🌸</span>
+                    <span>My Projects</span>
                 </h2>
-                <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                    Here are some of my recent projects from GitHub
-                </p>
-                <p class="projects-loading" style="font-size: 0.9rem; color: var(--text-secondary);">
-                    Gathering my projects... <span style="animation: sparkle 2s ease-in-out infinite;">🌸</span>
-                </p>
-            </div>
-            <!-- Projects Grid -->
-            <div id="projects-container" class="projects-grid">
-                <div class="projects-loading" style="text-align: center; grid-column: 1 / -1; padding: 4rem 0;">
+                <p class="section-subtitle">Here are some of my recent projects from GitHub</p>
+                <div class="loading-state" id="loading-state">
                     <div class="loading-spinner"></div>
-                    <p style="color: var(--text-secondary); margin-top: 1rem;">Loading projects from GitHub... <span style="animation: sparkle 2s ease-in-out infinite;">✨</span></p>
+                    <span>Gathering projects... 🌸</span>
+                </div>
+            </div>
+            
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="section-container">
+            <div class="about-content">
+                <h2 class="section-title">
+                    <span class="title-icon">✨</span>
+                    <span>About</span>
+                </h2>
+                <div class="about-text">
+                    <p>
+                        Passionate about creating beautiful, functional, and impactful digital experiences. 
+                        I love turning ideas into reality through code, and I'm always excited to learn new 
+                        technologies and push the boundaries of what's possible.
+                    </p>
+                    <p>
+                        This portfolio automatically syncs with my GitHub repositories, showcasing my latest 
+                        work and contributions to open source projects.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 🦶 Footer: copyright and credits -->
-    <footer style="padding: 2rem 0; text-align: center;">
-        <div class="container">
-            <div class="fade-in">
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                    © 2025 Narii. Built with <span aria-label="serduszko" style="animation: heartbeat 1.5s ease-in-out infinite;">💗</span>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <p class="footer-text">
+                    <span>© 2025</span>
+                    <span class="footer-name">Portfolio</span>
+                    <span>Built with</span>
+                    <span class="footer-heart">💗</span>
                 </p>
-                <p style="color: var(--text-secondary); font-size: 0.8rem; text-align: left; max-width: 200px; margin: 0 auto;">
-                    Made with love & coffee <span aria-label="kawa" title="kawa" style="animation: bounce 2s ease-in-out infinite;">☕</span>
-                </p>
+                <p class="footer-quote">Made with love & coffee ☕</p>
             </div>
         </div>
     </footer>
 
-    <!-- Screenshot Modal (not used, can be removed) -->
-    <div id="screenshotModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalContent">
-                <!-- Modal content will be dynamically inserted here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 📜 Main JS import -->
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
