@@ -1,85 +1,181 @@
-# ✨ Portfolio
-
-> **The perfect blend of beauty and back-end**  
-> Pretty designs, powerhouse code. Building with logic, designed with love. 🎀
-
 <div align="center">
 
-![GitHub Profile](https://img.shields.io/badge/GitHub-Enabled-667eea?style=for-the-badge&logo=github)
-![Auto Sync](https://img.shields.io/badge/Auto--Sync-Active-success?style=for-the-badge)
-![Responsive](https://img.shields.io/badge/Responsive-Mobile%20Friendly-764ba2?style=for-the-badge)
+# ✨ Portfolio
+
+<img src="https://files.catbox.moe/gsgan6.png" width="100%">
+
+<br>
+
+**A stunning portfolio that auto-fetches your GitHub repos**
+
+*Orange gradients • Smooth animations • Last.fm integration*
+
+<br>
+
+[![Portfolio](https://img.shields.io/badge/Portfolio-L0veNote-ff6b35?style=for-the-badge&logo=github&logoColor=white)](https://github.com/L0veNote)
+[![License](https://img.shields.io/badge/License-MIT-fbbf24?style=for-the-badge)](LICENSE)
+
+<img src="https://files.catbox.moe/gsgan6.png" width="100%">
 
 </div>
 
----
+<br>
 
-## 🌟 Features
+## 🌸 Features
 
-| ✨ | 🎨 | ⚡ |
-|:---:|:---:|:---:|
-| **Auto-Sync** | **Beautiful Design** | **Lightning Fast** |
-| Fetches repos automatically | Modern gradients & glows | Optimized performance |
+<table>
+<tr>
+<td width="50%">
 
-**🎯 Interactive** • **📱 Responsive** • **🎭 Smooth Animations**
+### ⚡ Auto-Fetch
+- GitHub profile & avatar
+- All public repositories (up to 100)
+- Stars, forks & language stats
+- Smart filtering (excludes forks, README-only repos)
 
----
+</td>
+<td width="50%">
+
+### 🎵 Last.fm Integration
+- Now Playing / Last Played widget
+- Real-time track updates (30s refresh)
+- Album art display
+- Total scrobble counter
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🎨 Design
+- Orange gradient theme with CSS variables
+- Glassmorphism card effects
+- Particle canvas background
+- Cursor glow effect (desktop)
+- Grid & noise overlays
+
+</td>
+<td width="50%">
+
+### ✨ Animations
+- Floating gradient orbs
+- Smooth scroll reveals (IntersectionObserver)
+- Card hover effects with glow
+- Animated stat counters
+- Loading spinners
+
+</td>
+</tr>
+</table>
+
+<br>
+
+## 📑 Sections
+
+- **Hero** — Profile card with GitHub avatar, bio, location, join date & stats (repos, stars, languages)
+- **Projects** — Auto-populated grid of up to 12 repos with language, stars, forks, live preview links & archived tags
+- **About** — Bio text, dynamically generated skills/languages grid, Last.fm Now Playing widget
+- **Navigation** — Fixed navbar with smooth scroll, mobile hamburger menu
+
+<img src="https://files.catbox.moe/gsgan6.png" width="100%">
+
+<br>
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/portfolio.git
-cd portfolio
+# Clone it
+git clone https://github.com/L0veNote/Portfolio.git
 
-# 2. Update your username in script.js (line 5)
-# Replace 'L0veNote' with your GitHub username
-
-# 3. Open index.html
-# That's it! ✨
+# Open it
+cd Portfolio && npx serve
 ```
 
----
+<br>
+
+## ⚙️ Configuration
+
+Edit `script.js`:
+
+```javascript
+// GitHub
+const GITHUB_USERNAME = 'L0veNote';
+
+// Last.fm
+const LASTFM_USERNAME = 'Yurikae';
+const LASTFM_API_KEY = 'your-api-key';
+```
+
+> 💡 Get a free Last.fm API key at [last.fm/api](https://www.last.fm/api/account/create)
+
+<br>
+
+<img src="https://files.catbox.moe/gsgan6.png" width="100%">
+
+<br>
+
+## 📁 Structure
+
+```
+Portfolio/
+├── 📄 index.html    → Structure & layout (Outfit, Space Grotesk, Fira Code fonts)
+├── 🎨 style.css     → Styles, animations & responsive breakpoints
+├── ⚡ script.js     → GitHub & Last.fm API integrations
+└── 📖 README.md     → Documentation
+```
+
+<br>
 
 ## 🎨 Customization
 
-**Colors** → Edit CSS variables in `style.css`  
-**Profile Picture** → Uses GitHub avatar automatically  
-**Fonts** → Space Grotesk & Poppins included
+<details>
+<summary><b>Change Colors</b></summary>
 
----
+Edit CSS variables in `style.css`:
 
-## 🛠️ Stack
+```css
+:root {
+    --orange-500: #f97316;
+    --orange-600: #ea580c;
+    --amber-400: #fbbf24;
+    --bg-primary: #0a0a0b;
+    --bg-secondary: #111113;
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+}
+```
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
-![GitHub API](https://img.shields.io/badge/GitHub_API-181717?logo=github&logoColor=white)
+</details>
 
----
+<details>
+<summary><b>Change Fonts</b></summary>
 
-## 📄 License & Attribution
+Update Google Fonts in `index.html`:
+- **Outfit** → Body text
+- **Space Grotesk** → Headings
+- **Fira Code** → Code/monospace elements
 
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+</details>
 
-This project is licensed under **MIT License**, but attribution is mandatory if you use this page.
+<details>
+<summary><b>Add Language Colors</b></summary>
 
-### ✅ You MUST:
+Edit `LANGUAGE_COLORS` in `script.js` to add colors for additional programming languages.
 
-- Credit **Narii / L0veNote** in a visible location on your page
-- Keep the attribution visible and accessible
-- Include copyright notices in distributed code
+</details>
 
-### ❌ You CANNOT:
+<br>
 
-- Remove or hide the attribution credit
-- Claim this as your original work
+<img src="https://files.catbox.moe/gsgan6.png" width="100%">
 
----
+<br>
 
 <div align="center">
 
-**Made with 💗 and ☕**
+**Made with 💜 by [L0veNote](https://github.com/L0veNote)**
 
-⭐ Star this repo if you find it helpful!
+*If you use this template, a star ⭐ would be lovely~*
+
+<img src="https://files.catbox.moe/gsgan6.png" width="100%">
 
 </div>
